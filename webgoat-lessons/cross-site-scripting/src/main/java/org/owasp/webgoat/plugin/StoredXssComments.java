@@ -43,6 +43,7 @@ import org.owasp.webgoat.assignments.AssignmentPath;
 import org.owasp.webgoat.assignments.AttackResult;
 import org.owasp.webgoat.session.WebSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.owasp.encoder.*;
@@ -89,7 +90,15 @@ public class StoredXssComments extends AssignmentEndpoint {
     @ResponseBody
     public AttackResult createNewComment (@RequestBody String commentStr)  throws IOException {
 
-        Comment comment = parseJson(commentStr);
+        //code added to avoid XSS
+    	//commentStr is received as JSON: {"text":""}
+    	Map<String, Object> map = new JacksonJsonParser().parseMap(commentStr);
+        final String input = String.valueOf(map.get("text"));
+        final String encoded = Encode.forHtml(input);
+        map.put("text", encoded);
+        commentStr = new ObjectMapper().writeValueAsString(map);
+        
+    	Comment comment = parseJson(commentStr);
 
         EvictingQueue<Comment> comments = userComments.getOrDefault(webSession.getUserName(), EvictingQueue.create(100));
         comment.setDateTime(DateTime.now().toString(fmt));

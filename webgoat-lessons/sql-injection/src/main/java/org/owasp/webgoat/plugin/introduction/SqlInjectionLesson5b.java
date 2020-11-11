@@ -58,15 +58,27 @@ public class SqlInjectionLesson5b extends AssignmentEndpoint {
 
     }
 
-    protected AttackResult injectableQuery(String accountName) {
+    protected AttackResult injectableQuery(String userId) {
         try {
             Connection connection = DatabaseUtilities.getConnection(getWebSession());
-            String query = "SELECT * FROM user_data WHERE userid = " + accountName;
+            //Vulnerable
+            //String query = "SELECT * FROM user_data WHERE userid = " + accountName;
+            
+            //Fixed
+            String query = "SELECT * FROM user_data WHERE userid = ?";
 
             try {
-                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                        ResultSet.CONCUR_READ_ONLY);
-                ResultSet results = statement.executeQuery(query);
+            	//Vulnerable
+                //Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                //        ResultSet.CONCUR_READ_ONLY);
+                //ResultSet results = statement.executeQuery(query);
+            	
+            	//Fixed
+            	PreparedStatement statement = connection.prepareStatement(query, 
+            			ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            	//with 101 or 1=1 this will crash because it can't be parsed
+            	statement.setInt(1, Integer.parseInt(userId));
+            	ResultSet results = statement.executeQuery();
 
                 if ((results != null) && (results.first() == true)) {
                     ResultSetMetaData resultsMetaData = results.getMetaData();
