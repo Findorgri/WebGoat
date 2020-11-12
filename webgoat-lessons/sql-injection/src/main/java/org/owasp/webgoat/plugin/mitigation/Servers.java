@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,6 +44,11 @@ public class Servers {
     @ResponseBody
     public List<Server> sort(@RequestParam String column) {
         Connection connection = DatabaseUtilities.getConnection(webSession);
+        
+        List<String> allowedSortableColumns = Arrays.asList(new String[]{"hostname", "ip", "mac", "status", "description"});
+        if(! allowedSortableColumns.contains(column))
+        	column = "hostname";
+        
         PreparedStatement preparedStatement = connection.prepareStatement("select id, hostname, ip, mac, status, description from servers  where status <> 'out of order' order by " + column);
         ResultSet rs = preparedStatement.executeQuery();
         List<Server> servers = Lists.newArrayList();
