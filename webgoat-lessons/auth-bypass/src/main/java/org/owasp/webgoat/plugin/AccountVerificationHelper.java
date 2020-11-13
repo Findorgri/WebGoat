@@ -54,16 +54,26 @@ public class AccountVerificationHelper {
             return false;
         }
 
-        if (submittedQuestions.containsKey("secQuestion0") && !submittedQuestions.get("secQuestion0").equals(secQuestionStore.get(verifyUserId).get("secQuestion0"))) {
+        /*if (submittedQuestions.containsKey("secQuestion0") && !submittedQuestions.get("secQuestion0").equals(secQuestionStore.get(verifyUserId).get("secQuestion0"))) {
             return false;
         }
 
         if (submittedQuestions.containsKey("secQuestion1") && !submittedQuestions.get("seQuestion1").equals(secQuestionStore.get(verifyUserId).get("secQuestion1"))) {
             return false;
-        }
+        }*/
 
         // else
-        return true;
+        //return true;
+        
+        if (submittedQuestions.containsKey("secQuestion0") && submittedQuestions.get("secQuestion0").equals(secQuestionStore.get(verifyUserId).get("secQuestion0"))) {
+            return true;
+        }
+
+        if (submittedQuestions.containsKey("secQuestion1") && submittedQuestions.get("seQuestion1").equals(secQuestionStore.get(verifyUserId).get("secQuestion1"))) {
+            return true;
+        }
+        
+        return false;
 
     }
 }
