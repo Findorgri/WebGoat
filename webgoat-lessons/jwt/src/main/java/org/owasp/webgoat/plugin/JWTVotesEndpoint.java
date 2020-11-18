@@ -139,7 +139,7 @@ public class JWTVotesEndpoint extends AssignmentEndpoint {
             return trackProgress(failed().feedback("jwt-invalid-token").build());
         } else {
             try {
-                Jwt jwt = Jwts.parser().setSigningKey(JWT_PASSWORD).parse(accessToken);
+                Jwt jwt = Jwts.parser().setSigningKey(JWT_PASSWORD).parseClaimsJws(accessToken);
                 Claims claims = (Claims) jwt.getBody();
                 boolean isAdmin = Boolean.valueOf((String) claims.get("admin"));
                 if (!isAdmin) {
