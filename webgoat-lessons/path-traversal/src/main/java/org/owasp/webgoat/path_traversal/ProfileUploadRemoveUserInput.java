@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import org.apache.commons.io.FilenameUtils;
+
 @RestController
 @AssignmentHints({"path-traversal-profile-remove-user-input.hint1", "path-traversal-profile-remove-user-input.hint2", "path-traversal-profile-remove-user-input.hint3"})
 public class ProfileUploadRemoveUserInput extends ProfileUploadBase {
@@ -24,6 +26,8 @@ public class ProfileUploadRemoveUserInput extends ProfileUploadBase {
     @PostMapping(value = "/PathTraversal/profile-upload-remove-user-input", consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public AttackResult uploadFileHandler(@RequestParam("uploadedFileRemoveUserInput") MultipartFile file) {
-        return super.execute(file, file.getOriginalFilename());
+    	//Fixed
+        //Added the processing of filename to be sanitized with FilenameUtils library
+        return super.execute(file, FilenameUtils.getName(file.getOriginalFilename()));
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import org.apache.commons.io.FilenameUtils;
+
 @RestController
 @AssignmentHints({"path-traversal-profile-fix.hint1", "path-traversal-profile-fix.hint2", "path-traversal-profile-fix.hint3"})
 public class ProfileUploadFix extends ProfileUploadBase {
@@ -24,7 +26,10 @@ public class ProfileUploadFix extends ProfileUploadBase {
     public AttackResult uploadFileHandler(
             @RequestParam("uploadedFileFix") MultipartFile file,
             @RequestParam(value = "fullNameFix", required = false) String fullName) {
-        return super.execute(file, fullName != null ? fullName.replace("../", "") : "");
+        //return super.execute(file, fullName != null ? fullName.replace("../", "") : "");
+    	//Fixed
+        //Added the processing of the fullname user input to be sanitized with FilenameUtils library
+    	return super.execute(file, fullName != null ? FilenameUtils.getName(fullName) : "");
     }
 
     @GetMapping("/PathTraversal/profile-picture-fix")

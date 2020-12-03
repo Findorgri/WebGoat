@@ -1,6 +1,8 @@
 package org.owasp.webgoat.path_traversal;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.owasp.webgoat.assignments.AssignmentEndpoint;
 import org.owasp.webgoat.assignments.AssignmentHints;
@@ -78,7 +80,9 @@ public class ProfileUploadRetrieval extends AssignmentEndpoint {
             return ResponseEntity.badRequest().body("Illegal characters are not allowed in the query params");
         }
         try {
-            var id = request.getParameter("id");
+        	//Fixed
+            //Added the processing of id parameter to be sanitized with FilenameUtils library
+            var id = FilenameUtils.getName(request.getParameter("id"));
             var catPicture = new File(catPicturesDirectory, (id == null ? RandomUtils.nextInt(1, 11) : id) + ".jpg");
 
             if (catPicture.getName().toLowerCase().contains("path-traversal-secret.jpg")) {
